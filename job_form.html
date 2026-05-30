@@ -21,11 +21,25 @@
     background: #fff; -webkit-appearance: none; appearance: none; font-family: inherit;
   }
   input:focus, select:focus, textarea:focus { outline: none; border-color: #1B3A6B; box-shadow: 0 0 0 3px rgba(27,58,107,0.1); }
-  textarea  { resize: none; height: 80px; }
+  textarea  { resize: none; height: 72px; }
   select    { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; padding-right: 36px; }
   .row2     { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .visit-banner { display: none; background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 10px 13px; font-size: 13px; color: #92400E; margin-bottom: 14px; line-height: 1.5; }
-  .visit-banner.show { display: block; }
+
+  /* Return visit job card */
+  .job-card { display: none; background: #EBF3FB; border: 1px solid #BFDBFE; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  .job-card.show { display: block; }
+  .job-card-title { font-size: 13px; font-weight: 600; color: #1B3A6B; margin-bottom: 8px; }
+  .job-card-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .job-card-row span:first-child { color: #6B7280; }
+  .job-card-row span:last-child  { font-weight: 500; color: #1a1a1a; }
+  .hours-adding { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 10px 13px; font-size: 13px; color: #92400E; margin-top: 10px; }
+
+  /* Loading spinner */
+  .loading { display: none; text-align: center; padding: 16px; color: #6B7280; font-size: 14px; }
+  .loading.show { display: block; }
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #D1D5DB; border-top-color: #1B3A6B; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 8px; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   .upload-area { border: 2px dashed #D1D5DB; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; background: #FAFAFA; }
   .upload-area.has-files { border-color: #1B3A6B; background: #EBF3FB; }
   .upload-icon { font-size: 28px; margin-bottom: 6px; }
@@ -36,20 +50,26 @@
   .file-item    { display: flex; align-items: center; justify-content: space-between; background: #F3F4F6; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; font-size: 13px; }
   .file-item span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 8px; color: #374151; }
   .file-remove  { background: none; border: none; color: #9CA3AF; font-size: 18px; cursor: pointer; padding: 0; line-height: 1; flex-shrink: 0; }
-  .btn          { width: 100%; padding: 15px; background: #1B3A6B; color: #fff; border: none; border-radius: 10px; font-size: 17px; font-weight: 600; cursor: pointer; margin-top: 4px; }
-  .btn:active   { background: #142d54; }
+
+  .btn { width: 100%; padding: 15px; background: #1B3A6B; color: #fff; border: none; border-radius: 10px; font-size: 17px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+  .btn:active { background: #142d54; }
   .btn:disabled { opacity: 0.6; }
-  .progress     { display: none; margin-top: 12px; }
+  .progress { display: none; margin-top: 12px; }
   .progress-bar-wrap { background: #E5E7EB; border-radius: 99px; height: 8px; margin-top: 8px; overflow: hidden; }
   .progress-bar { height: 100%; background: #1B3A6B; border-radius: 99px; width: 0%; transition: width 0.3s; }
   .progress-label { font-size: 13px; color: #6B7280; text-align: center; margin-top: 6px; }
-  .success      { display: none; background: #ECFDF5; border: 1px solid #6EE7B7; border-radius: 12px; padding: 24px 20px; text-align: center; margin-top: 12px; }
+  .success { display: none; background: #ECFDF5; border: 1px solid #6EE7B7; border-radius: 12px; padding: 24px 20px; text-align: center; margin-top: 12px; }
   .success .check { font-size: 44px; }
   .success h2   { color: #065F46; font-size: 18px; margin: 10px 0 6px; }
   .success p    { color: #047857; font-size: 14px; }
   .success .drive-link { display: inline-block; margin-top: 10px; padding: 8px 18px; background: #fff; border: 1px solid #6EE7B7; border-radius: 8px; color: #065F46; font-size: 13px; font-weight: 600; text-decoration: none; }
-  .success .reset-btn  { display: inline-block; margin-top: 12px; padding: 11px 28px; background: #1B3A6B; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .success .reset-btn { display: inline-block; margin-top: 12px; padding: 11px 28px; background: #1B3A6B; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
   .err { display: none; background: #FEF2F2; border: 1px solid #FECACA; border-radius: 8px; padding: 12px; margin-top: 10px; font-size: 13px; color: #B91C1C; text-align: center; }
+
+  /* Hide/show sections */
+  .new-job-section { }
+  .return-only { display: none; }
+  .return-only.show { display: block; }
 </style>
 </head>
 <body>
@@ -61,45 +81,72 @@
 
 <form id="jobForm">
 
+  <!-- Visit type toggle -->
   <div class="section">
     <div class="sec-title">Job Type</div>
     <div class="field">
-      <label>Is this a new job or a return visit?</label>
       <select id="visitType" onchange="handleVisitType()">
         <option value="new">🆕  New Job</option>
         <option value="return">🔄  Return Visit</option>
       </select>
     </div>
-    <div class="visit-banner" id="visitBanner">
-      ⚠️ Return visit — hours and costs will be added to the existing job row in the sheet. Make sure the client name matches exactly.
+  </div>
+
+  <!-- RETURN VISIT: job picker -->
+  <div class="section return-only" id="returnSection">
+    <div class="sec-title">Pick the Job</div>
+    <div class="loading" id="loadingJobs"><span class="spinner"></span> Loading jobs from sheet...</div>
+    <div class="field" id="jobPickerField" style="display:none">
+      <label>Select Job</label>
+      <select id="jobPicker" onchange="fillFromJob()">
+        <option value="">Select a job...</option>
+      </select>
+    </div>
+    <!-- Job summary card -->
+    <div class="job-card" id="jobCard">
+      <div class="job-card-title" id="cardTitle"></div>
+      <div class="job-card-row"><span>Address</span><span id="cardAddress">—</span></div>
+      <div class="job-card-row"><span>Description</span><span id="cardDesc">—</span></div>
+      <div class="job-card-row"><span>Current Tech Hours</span><span id="cardTechHrs">—</span></div>
+      <div class="job-card-row"><span>Current Materials</span><span id="cardMaterials">—</span></div>
+      <div class="job-card-row"><span>Status</span><span id="cardStatus">—</span></div>
+      <div class="hours-adding">⬇ Enter the hours and costs you're <strong>adding</strong> below — they'll be added on top of what's already there.</div>
     </div>
   </div>
 
-  <div class="section">
+  <!-- NEW JOB: client info -->
+  <div class="section new-job-section" id="clientSection">
     <div class="sec-title">Client Info</div>
     <div class="field"><label>Client Name *</label><input type="text" id="client" placeholder="ABC Property Management" required></div>
     <div class="field"><label>Job Address</label><input type="text" id="address" placeholder="123 Main St, Phoenix AZ"></div>
   </div>
 
-  <div class="section">
+  <!-- Job details — shown for new jobs -->
+  <div class="section new-job-section" id="detailsSection">
     <div class="sec-title">Job Details</div>
     <div class="field"><label>Date</label><input type="date" id="date"></div>
     <div class="field"><label>Job Description</label><textarea id="desc" placeholder="What was done on this job..."></textarea></div>
   </div>
 
+  <!-- Hours — always shown, label changes -->
   <div class="section">
     <div class="sec-title">Hours Worked</div>
-    <div class="field"><label>Your Hours</label><input type="number" id="techhrs" placeholder="0" step="0.5" min="0" inputmode="decimal"></div>
+    <div class="field">
+      <label id="hoursLabel">Your Hours</label>
+      <input type="number" id="techhrs" placeholder="0" step="0.5" min="0" inputmode="decimal">
+    </div>
   </div>
 
+  <!-- Costs — always shown -->
   <div class="section">
     <div class="sec-title">Costs</div>
     <div class="row2">
-      <div class="field"><label>Material Cost ($)</label><input type="number" id="materials" placeholder="0.00" step="0.01" min="0" inputmode="decimal"></div>
+      <div class="field"><label id="materialsLabel">Material Cost ($)</label><input type="number" id="materials" placeholder="0.00" step="0.01" min="0" inputmode="decimal"></div>
       <div class="field"><label>Other Costs ($)</label><input type="number" id="other" placeholder="0.00" step="0.01" min="0" inputmode="decimal"></div>
     </div>
   </div>
 
+  <!-- Status & notes — always shown -->
   <div class="section">
     <div class="sec-title">Status & Notes</div>
     <div class="field"><label>Status</label>
@@ -115,6 +162,7 @@
     <div class="field"><label>Notes</label><textarea id="notes" placeholder="Any extra details..."></textarea></div>
   </div>
 
+  <!-- Photos -->
   <div class="section">
     <div class="sec-title">Photos & Files</div>
     <div class="field">
@@ -148,18 +196,94 @@
 </div>
 
 <script>
-const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbxbFhtPtVObEO2m-q6HwVjISEi82uGVbIUKA9IG4-A5CDk_xyDZT9pKZjwy_1rI1cbO/exec';
-const MONTHS      = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxbFhtPtVObEO2m-q6HwVjISEi82uGVbIUKA9IG4-A5CDk_xyDZT9pKZjwy_1rI1cbO/exec';
+const MONTHS    = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 let selectedFiles = [];
+let allJobs = [];
+let selectedJob = null;
 
 document.getElementById('date').value = new Date().toISOString().split('T')[0];
 
-function handleVisitType() {
+async function handleVisitType() {
   const isReturn = document.getElementById('visitType').value === 'return';
-  document.getElementById('visitBanner').classList.toggle('show', isReturn);
+
+  // Toggle UI sections
+  document.querySelectorAll('.new-job-section').forEach(el => el.style.display = isReturn ? 'none' : 'block');
+  document.getElementById('returnSection').classList.toggle('show', isReturn);
   document.getElementById('submitBtn').textContent = isReturn ? 'Update Job in Sheet' : 'Add Job to Sheet';
+  document.getElementById('hoursLabel').textContent = isReturn ? 'Hours to Add' : 'Your Hours';
+  document.getElementById('materialsLabel').textContent = isReturn ? 'Materials to Add ($)' : 'Material Cost ($)';
+
+  // Remove required from client if return visit
+  document.getElementById('client').required = !isReturn;
+
+  if (isReturn && allJobs.length === 0) {
+    // Load jobs from sheet
+    document.getElementById('loadingJobs').classList.add('show');
+    document.getElementById('jobPickerField').style.display = 'none';
+    try {
+      const resp = await fetch(SHEET_URL + '?action=getJobs');
+      allJobs = await resp.json();
+      populateJobPicker();
+    } catch(e) {
+      document.getElementById('loadingJobs').innerHTML = '❌ Could not load jobs. Check your connection.';
+    }
+  }
 }
 
+function populateJobPicker() {
+  document.getElementById('loadingJobs').classList.remove('show');
+  document.getElementById('jobPickerField').style.display = 'block';
+  const picker = document.getElementById('jobPicker');
+  picker.innerHTML = '<option value="">Select a job...</option>';
+  allJobs.forEach((job, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = job.client + (job.desc ? ' — ' + job.desc.substring(0, 40) : '');
+    picker.appendChild(opt);
+  });
+}
+
+function fillFromJob() {
+  const idx = document.getElementById('jobPicker').value;
+  if (idx === '') {
+    document.getElementById('jobCard').classList.remove('show');
+    selectedJob = null;
+    return;
+  }
+  selectedJob = allJobs[idx];
+
+  // Populate hidden client field
+  document.getElementById('client').value = selectedJob.client;
+
+  // Show job card
+  document.getElementById('jobCard').classList.add('show');
+  document.getElementById('cardTitle').textContent = selectedJob.client;
+  document.getElementById('cardAddress').textContent = selectedJob.address || '—';
+  document.getElementById('cardDesc').textContent = selectedJob.desc || '—';
+  document.getElementById('cardTechHrs').textContent = selectedJob.techhrs || '0';
+  document.getElementById('cardMaterials').textContent = selectedJob.materials ? '$' + Number(selectedJob.materials).toFixed(2) : '$0.00';
+  document.getElementById('cardStatus').textContent = selectedJob.status || '—';
+
+  // Pre-fill status
+  const statusEl = document.getElementById('status');
+  if (selectedJob.status) {
+    for (let i = 0; i < statusEl.options.length; i++) {
+      if (statusEl.options[i].value === selectedJob.status) {
+        statusEl.selectedIndex = i;
+        break;
+      }
+    }
+  }
+
+  // Clear hours/costs so he enters only what he's adding
+  document.getElementById('techhrs').value = '';
+  document.getElementById('materials').value = '';
+  document.getElementById('other').value = '';
+  document.getElementById('notes').value = '';
+}
+
+// File handling
 document.getElementById('fileInput').addEventListener('change', function() {
   for (const file of this.files) {
     if (!selectedFiles.find(f => f.name === file.name && f.size === file.size)) selectedFiles.push(file);
@@ -206,24 +330,23 @@ document.getElementById('jobForm').addEventListener('submit', async function(e) 
   btn.disabled = true;
   btn.textContent = 'Submitting...';
 
-  const client    = document.getElementById('client').value;
-  const date      = document.getElementById('date').value;
-  const isReturn  = document.getElementById('visitType').value === 'return';
+  const isReturn = document.getElementById('visitType').value === 'return';
+  const client   = document.getElementById('client').value;
+  const date     = document.getElementById('date').value;
 
   const jobData = {
     client,
-    address:    document.getElementById('address').value,
+    address:   isReturn ? '' : document.getElementById('address').value,
     date,
-    desc:       document.getElementById('desc').value,
-    yourhrs:    '0',
-    techhrs:    document.getElementById('techhrs').value || '0',
-    materials:  document.getElementById('materials').value || '0',
-    other:      document.getElementById('other').value || '0',
-    status:     document.getElementById('status').value,
-    notes:      document.getElementById('notes').value,
-    credit:     '',
-    jobtype:    '',
-    visitType:  isReturn ? 'return' : 'new',
+    desc:      isReturn ? '' : document.getElementById('desc').value,
+    yourhrs:   '0',
+    techhrs:   document.getElementById('techhrs').value || '0',
+    materials: document.getElementById('materials').value || '0',
+    other:     document.getElementById('other').value || '0',
+    status:    document.getElementById('status').value,
+    notes:     document.getElementById('notes').value,
+    credit:    '',
+    visitType: isReturn ? 'return' : 'new',
   };
 
   try {
@@ -241,7 +364,7 @@ document.getElementById('jobForm').addEventListener('submit', async function(e) 
         }).toString(), { method: 'GET', mode: 'no-cors' });
       }
       setProgress(85, 'Files uploaded, saving job...');
-      jobData.hasFiles  = 'true';
+      jobData.hasFiles   = 'true';
       jobData.folderName = `${client} - ${date}`;
     }
 
@@ -253,9 +376,10 @@ document.getElementById('jobForm').addEventListener('submit', async function(e) 
       progress.style.display = 'none';
       document.getElementById('jobForm').style.display = 'none';
       document.getElementById('successBox').style.display = 'block';
-      document.getElementById('successTitle').textContent = isReturn ? 'Job Updated!' : 'Job Added!';
+      document.getElementById('successTitle').textContent = isReturn ? 'Hours Added!' : 'Job Added!';
+      const addedHrs = document.getElementById('techhrs').value || '0';
       document.getElementById('successDetail').textContent = isReturn
-        ? `Hours added to ${client} → ${MONTHS[new Date().getMonth()]} tab`
+        ? `${addedHrs} hrs added to ${client} → ${MONTHS[new Date().getMonth()]} tab`
         : `${client} · ${date} → ${MONTHS[new Date().getMonth()]} tab`;
       if (selectedFiles.length > 0) {
         const link = document.getElementById('driveFolderLink');
@@ -278,10 +402,17 @@ function resetForm() {
   document.getElementById('jobForm').style.display = 'block';
   document.getElementById('successBox').style.display = 'none';
   document.getElementById('driveFolderLink').style.display = 'none';
-  document.getElementById('visitBanner').classList.remove('show');
+  document.getElementById('returnSection').classList.remove('show');
+  document.getElementById('jobCard').classList.remove('show');
+  document.querySelectorAll('.new-job-section').forEach(el => el.style.display = 'block');
   document.getElementById('submitBtn').disabled = false;
   document.getElementById('submitBtn').textContent = 'Add Job to Sheet';
+  document.getElementById('hoursLabel').textContent = 'Your Hours';
+  document.getElementById('materialsLabel').textContent = 'Material Cost ($)';
+  document.getElementById('client').required = true;
   selectedFiles = [];
+  selectedJob = null;
+  allJobs = [];
   renderFileList();
 }
 </script>
