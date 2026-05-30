@@ -24,8 +24,7 @@
   textarea  { resize: none; height: 80px; }
   select    { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; padding-right: 36px; }
   .row2     { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .upload-area { border: 2px dashed #D1D5DB; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: border-color 0.2s; background: #FAFAFA; }
-  .upload-area:active { border-color: #1B3A6B; background: #EBF3FB; }
+  .upload-area { border: 2px dashed #D1D5DB; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; background: #FAFAFA; }
   .upload-area.has-files { border-color: #1B3A6B; background: #EBF3FB; }
   .upload-icon { font-size: 28px; margin-bottom: 6px; }
   .upload-label { font-size: 14px; font-weight: 500; color: #374151; }
@@ -68,33 +67,13 @@
 
   <div class="section">
     <div class="sec-title">Job Details</div>
-    <div class="row2">
-      <div class="field"><label>Date Completed</label><input type="date" id="date"></div>
-      <div class="field"><label>Job Type</label>
-        <select id="jobtype">
-          <option value="">Select...</option>
-          <option>Service Call</option><option>Rough-In</option><option>Top-Out</option>
-          <option>Trim</option><option>Backflow Test</option><option>Hydro-Jetting</option>
-          <option>Repair</option><option>Install</option><option>Emergency</option><option>Other</option>
-        </select>
-      </div>
-    </div>
+    <div class="field"><label>Date Completed</label><input type="date" id="date"></div>
     <div class="field"><label>Job Description</label><textarea id="desc" placeholder="What was done on this job..."></textarea></div>
-    <div class="field"><label>Job Credit</label>
-      <select id="credit">
-        <option value="">Select...</option>
-        <option>Alex</option>
-        <option>Caleb</option>
-      </select>
-    </div>
   </div>
 
   <div class="section">
     <div class="sec-title">Hours Worked</div>
-    <div class="row2">
-      <div class="field"><label>Your Hours</label><input type="number" id="yourhrs" placeholder="0" step="0.5" min="0" inputmode="decimal"></div>
-      <div class="field"><label>Tech Hours</label><input type="number" id="techhrs" placeholder="0" step="0.5" min="0" inputmode="decimal"></div>
-    </div>
+    <div class="field"><label>Your Hours</label><input type="number" id="techhrs" placeholder="0" step="0.5" min="0" inputmode="decimal"></div>
   </div>
 
   <div class="section">
@@ -128,7 +107,7 @@
         <div class="upload-label">Tap to add photos or files</div>
         <div class="upload-sub">Photos, PDFs, invoices — anything related to this job</div>
       </div>
-      <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
+      <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx">
       <div class="file-list" id="fileList"></div>
     </div>
   </div>
@@ -159,7 +138,6 @@ let selectedFiles = [];
 
 document.getElementById('date').value = new Date().toISOString().split('T')[0];
 
-// File picker
 document.getElementById('fileInput').addEventListener('change', function() {
   for (const file of this.files) {
     if (!selectedFiles.find(f => f.name === file.name && f.size === file.size)) {
@@ -184,17 +162,13 @@ function renderFileList() {
   });
 }
 
-function removeFile(idx) {
-  selectedFiles.splice(idx, 1);
-  renderFileList();
-}
+function removeFile(idx) { selectedFiles.splice(idx, 1); renderFileList(); }
 
 function setProgress(pct, label) {
   document.getElementById('progressBar').style.width = pct + '%';
   document.getElementById('progressLabel').textContent = label;
 }
 
-// Convert file to base64
 function toBase64(file) {
   return new Promise((res, rej) => {
     const r = new FileReader();
@@ -206,8 +180,8 @@ function toBase64(file) {
 
 document.getElementById('jobForm').addEventListener('submit', async function(e) {
   e.preventDefault();
-  const btn      = document.getElementById('submitBtn');
-  const errMsg   = document.getElementById('errMsg');
+  const btn    = document.getElementById('submitBtn');
+  const errMsg = document.getElementById('errMsg');
   const progress = document.getElementById('progressWrap');
   errMsg.style.display = 'none';
   btn.disabled = true;
@@ -220,35 +194,29 @@ document.getElementById('jobForm').addEventListener('submit', async function(e) 
     client,
     address:   document.getElementById('address').value,
     date,
-    jobtype:   document.getElementById('jobtype').value,
     desc:      document.getElementById('desc').value,
-    credit:    document.getElementById('credit').value,
-    yourhrs:   document.getElementById('yourhrs').value || '0',
+    yourhrs:   '0',
     techhrs:   document.getElementById('techhrs').value || '0',
     materials: document.getElementById('materials').value || '0',
     other:     document.getElementById('other').value || '0',
     status:    document.getElementById('status').value,
     notes:     document.getElementById('notes').value,
+    credit:    '',
+    jobtype:   '',
   };
 
-  let folderUrl = '';
-
   try {
-    // Step 1: Upload files if any
     if (selectedFiles.length > 0) {
       progress.style.display = 'block';
       setProgress(10, `Uploading ${selectedFiles.length} file(s)...`);
-
       for (let i = 0; i < selectedFiles.length; i++) {
         const file = selectedFiles[i];
         setProgress(10 + Math.round((i / selectedFiles.length) * 70), `Uploading ${file.name}...`);
         const base64 = await toBase64(file);
         const uploadParams = new URLSearchParams({
-          action:   'upload',
-          filename: file.name,
+          action: 'upload', filename: file.name,
           mimetype: file.type || 'application/octet-stream',
-          data:     base64,
-          folder:   `${client} - ${date}`,
+          data: base64, folder: `${client} - ${date}`,
         });
         await fetch(SHEET_URL + '?' + uploadParams.toString(), { method: 'GET', mode: 'no-cors' });
       }
@@ -257,7 +225,6 @@ document.getElementById('jobForm').addEventListener('submit', async function(e) 
       jobData.folderName = `${client} - ${date}`;
     }
 
-    // Step 2: Submit job data
     setProgress(90, 'Saving job to sheet...');
     await fetch(SHEET_URL + '?' + new URLSearchParams(jobData).toString(), { method: 'GET', mode: 'no-cors' });
     setProgress(100, 'Done!');
@@ -265,8 +232,7 @@ document.getElementById('jobForm').addEventListener('submit', async function(e) 
     setTimeout(() => {
       progress.style.display = 'none';
       document.getElementById('jobForm').style.display = 'none';
-      const box = document.getElementById('successBox');
-      box.style.display = 'block';
+      document.getElementById('successBox').style.display = 'block';
       document.getElementById('successDetail').textContent =
         client + ' · ' + date + ' → ' + MONTHS[new Date().getMonth()] + ' tab';
       if (selectedFiles.length > 0) {
