@@ -347,6 +347,7 @@ document.getElementById('jobForm').addEventListener('submit', async function(e) 
     notes:     document.getElementById('notes').value,
     credit:    '',
     visitType: isReturn ? 'return' : 'new',
+    rowNum:    selectedJob ? selectedJob.row.toString() : '',
   };
 
   try {
