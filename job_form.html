@@ -238,7 +238,8 @@ function populateJobPicker() {
   picker.innerHTML = '<option value="">Select a job...</option>';
   allJobs.forEach((job, idx) => {
     const opt = document.createElement('option');
-    opt.value = idx;
+    opt.value = idx;  // array index
+    opt.setAttribute('data-row', job.row);  // actual sheet row
     opt.textContent = job.client + (job.desc ? ' — ' + job.desc.substring(0, 40) : '');
     picker.appendChild(opt);
   });
@@ -251,7 +252,7 @@ function fillFromJob() {
     selectedJob = null;
     return;
   }
-  selectedJob = allJobs[idx];
+  selectedJob = allJobs[parseInt(idx)];
 
   // Populate hidden client field
   document.getElementById('client').value = selectedJob.client;
