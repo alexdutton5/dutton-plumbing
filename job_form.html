@@ -24,6 +24,8 @@
   textarea  { resize: none; height: 80px; }
   select    { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; padding-right: 36px; }
   .row2     { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .visit-banner { display: none; background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 10px 13px; font-size: 13px; color: #92400E; margin-bottom: 14px; line-height: 1.5; }
+  .visit-banner.show { display: block; }
   .upload-area { border: 2px dashed #D1D5DB; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; background: #FAFAFA; }
   .upload-area.has-files { border-color: #1B3A6B; background: #EBF3FB; }
   .upload-icon { font-size: 28px; margin-bottom: 6px; }
@@ -60,6 +62,20 @@
 <form id="jobForm">
 
   <div class="section">
+    <div class="sec-title">Job Type</div>
+    <div class="field">
+      <label>Is this a new job or a return visit?</label>
+      <select id="visitType" onchange="handleVisitType()">
+        <option value="new">🆕  New Job</option>
+        <option value="return">🔄  Return Visit</option>
+      </select>
+    </div>
+    <div class="visit-banner" id="visitBanner">
+      ⚠️ Return visit — hours and costs will be added to the existing job row in the sheet. Make sure the client name matches exactly.
+    </div>
+  </div>
+
+  <div class="section">
     <div class="sec-title">Client Info</div>
     <div class="field"><label>Client Name *</label><input type="text" id="client" placeholder="ABC Property Management" required></div>
     <div class="field"><label>Job Address</label><input type="text" id="address" placeholder="123 Main St, Phoenix AZ"></div>
@@ -67,7 +83,7 @@
 
   <div class="section">
     <div class="sec-title">Job Details</div>
-    <div class="field"><label>Date Completed</label><input type="date" id="date"></div>
+    <div class="field"><label>Date</label><input type="date" id="date"></div>
     <div class="field"><label>Job Description</label><textarea id="desc" placeholder="What was done on this job..."></textarea></div>
   </div>
 
@@ -124,7 +140,7 @@
 
 <div class="success" id="successBox">
   <div class="check">✅</div>
-  <h2>Job Added!</h2>
+  <h2 id="successTitle">Job Added!</h2>
   <p id="successDetail"></p>
   <a id="driveFolderLink" class="drive-link" href="#" target="_blank" style="display:none">📁 View Files in Drive</a>
   <br>
@@ -132,17 +148,21 @@
 </div>
 
 <script>
-const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbzNV3tiZ47GVYOOEgOdGKbG_5Lf11NneBUXPYN2TxI-XmF-3GNY2Q6H4gSfxfpBCfHQxA/exec';
+const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbxbFhtPtVObEO2m-q6HwVjISEi82uGVbIUKA9IG4-A5CDk_xyDZT9pKZjwy_1rI1cbO/exec';
 const MONTHS      = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 let selectedFiles = [];
 
 document.getElementById('date').value = new Date().toISOString().split('T')[0];
 
+function handleVisitType() {
+  const isReturn = document.getElementById('visitType').value === 'return';
+  document.getElementById('visitBanner').classList.toggle('show', isReturn);
+  document.getElementById('submitBtn').textContent = isReturn ? 'Update Job in Sheet' : 'Add Job to Sheet';
+}
+
 document.getElementById('fileInput').addEventListener('change', function() {
   for (const file of this.files) {
-    if (!selectedFiles.find(f => f.name === file.name && f.size === file.size)) {
-      selectedFiles.push(file);
-    }
+    if (!selectedFiles.find(f => f.name === file.name && f.size === file.size)) selectedFiles.push(file);
   }
   renderFileList();
   this.value = '';
@@ -156,8 +176,7 @@ function renderFileList() {
   selectedFiles.forEach((file, idx) => {
     const item = document.createElement('div');
     item.className = 'file-item';
-    const icon = file.type.startsWith('image/') ? '🖼️' : '📄';
-    item.innerHTML = `<span>${icon} ${file.name}</span><button type="button" class="file-remove" onclick="removeFile(${idx})">×</button>`;
+    item.innerHTML = `<span>${file.type.startsWith('image/') ? '🖼️' : '📄'} ${file.name}</span><button type="button" class="file-remove" onclick="removeFile(${idx})">×</button>`;
     list.appendChild(item);
   });
 }
@@ -180,29 +199,31 @@ function toBase64(file) {
 
 document.getElementById('jobForm').addEventListener('submit', async function(e) {
   e.preventDefault();
-  const btn    = document.getElementById('submitBtn');
-  const errMsg = document.getElementById('errMsg');
+  const btn      = document.getElementById('submitBtn');
+  const errMsg   = document.getElementById('errMsg');
   const progress = document.getElementById('progressWrap');
   errMsg.style.display = 'none';
   btn.disabled = true;
   btn.textContent = 'Submitting...';
 
-  const client = document.getElementById('client').value;
-  const date   = document.getElementById('date').value;
+  const client    = document.getElementById('client').value;
+  const date      = document.getElementById('date').value;
+  const isReturn  = document.getElementById('visitType').value === 'return';
 
   const jobData = {
     client,
-    address:   document.getElementById('address').value,
+    address:    document.getElementById('address').value,
     date,
-    desc:      document.getElementById('desc').value,
-    yourhrs:   '0',
-    techhrs:   document.getElementById('techhrs').value || '0',
-    materials: document.getElementById('materials').value || '0',
-    other:     document.getElementById('other').value || '0',
-    status:    document.getElementById('status').value,
-    notes:     document.getElementById('notes').value,
-    credit:    '',
-    jobtype:   '',
+    desc:       document.getElementById('desc').value,
+    yourhrs:    '0',
+    techhrs:    document.getElementById('techhrs').value || '0',
+    materials:  document.getElementById('materials').value || '0',
+    other:      document.getElementById('other').value || '0',
+    status:     document.getElementById('status').value,
+    notes:      document.getElementById('notes').value,
+    credit:     '',
+    jobtype:    '',
+    visitType:  isReturn ? 'return' : 'new',
   };
 
   try {
@@ -213,19 +234,18 @@ document.getElementById('jobForm').addEventListener('submit', async function(e) 
         const file = selectedFiles[i];
         setProgress(10 + Math.round((i / selectedFiles.length) * 70), `Uploading ${file.name}...`);
         const base64 = await toBase64(file);
-        const uploadParams = new URLSearchParams({
+        await fetch(SHEET_URL + '?' + new URLSearchParams({
           action: 'upload', filename: file.name,
           mimetype: file.type || 'application/octet-stream',
           data: base64, folder: `${client} - ${date}`,
-        });
-        await fetch(SHEET_URL + '?' + uploadParams.toString(), { method: 'GET', mode: 'no-cors' });
+        }).toString(), { method: 'GET', mode: 'no-cors' });
       }
       setProgress(85, 'Files uploaded, saving job...');
-      jobData.hasFiles = 'true';
+      jobData.hasFiles  = 'true';
       jobData.folderName = `${client} - ${date}`;
     }
 
-    setProgress(90, 'Saving job to sheet...');
+    setProgress(90, 'Saving to sheet...');
     await fetch(SHEET_URL + '?' + new URLSearchParams(jobData).toString(), { method: 'GET', mode: 'no-cors' });
     setProgress(100, 'Done!');
 
@@ -233,8 +253,10 @@ document.getElementById('jobForm').addEventListener('submit', async function(e) 
       progress.style.display = 'none';
       document.getElementById('jobForm').style.display = 'none';
       document.getElementById('successBox').style.display = 'block';
-      document.getElementById('successDetail').textContent =
-        client + ' · ' + date + ' → ' + MONTHS[new Date().getMonth()] + ' tab';
+      document.getElementById('successTitle').textContent = isReturn ? 'Job Updated!' : 'Job Added!';
+      document.getElementById('successDetail').textContent = isReturn
+        ? `Hours added to ${client} → ${MONTHS[new Date().getMonth()]} tab`
+        : `${client} · ${date} → ${MONTHS[new Date().getMonth()]} tab`;
       if (selectedFiles.length > 0) {
         const link = document.getElementById('driveFolderLink');
         link.href = 'https://drive.google.com/drive/folders/1QTzMcLU-tiRb4SmGtx1cEXNma42TfXNP';
@@ -246,7 +268,7 @@ document.getElementById('jobForm').addEventListener('submit', async function(e) 
     progress.style.display = 'none';
     errMsg.style.display = 'block';
     btn.disabled = false;
-    btn.textContent = 'Add Job to Sheet';
+    btn.textContent = isReturn ? 'Update Job in Sheet' : 'Add Job to Sheet';
   }
 });
 
@@ -256,6 +278,7 @@ function resetForm() {
   document.getElementById('jobForm').style.display = 'block';
   document.getElementById('successBox').style.display = 'none';
   document.getElementById('driveFolderLink').style.display = 'none';
+  document.getElementById('visitBanner').classList.remove('show');
   document.getElementById('submitBtn').disabled = false;
   document.getElementById('submitBtn').textContent = 'Add Job to Sheet';
   selectedFiles = [];
