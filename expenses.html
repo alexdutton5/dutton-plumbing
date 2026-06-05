@@ -2,119 +2,132 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dutton Plumbing — Card Expenses</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F0F2F5;color:#1a1a1a;padding:16px;padding-bottom:40px}
-header{background:#1B3A6B;color:#fff;border-radius:12px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
-header h1{font-size:18px;font-weight:600}
-header p{font-size:12px;opacity:.75;margin-top:2px}
-.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid #E8EAED}
-.card-title{font-size:11px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px}
-.drop-zone{border:2px dashed #D1D5DB;border-radius:8px;padding:2rem;text-align:center;cursor:pointer;background:#FAFAFA;margin-bottom:12px}
-.drop-zone.drag{border-color:#1B3A6B;background:#EBF3FB}
-.drop-icon{font-size:32px;margin-bottom:8px}
-.drop-label{font-size:15px;font-weight:500;color:#374151;margin-bottom:4px}
-.drop-sub{font-size:12px;color:#9CA3AF}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F0F2F5;color:#1a1a1a;padding:24px}
+.page{max-width:960px;margin:0 auto}
+header{background:#1B3A6B;color:#fff;border-radius:12px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
+header h1{font-size:20px;font-weight:600}
+header p{font-size:13px;opacity:.75;margin-top:2px}
+.card{background:#fff;border-radius:12px;padding:20px 24px;margin-bottom:16px;border:1px solid #E8EAED}
+.card-title{font-size:12px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px}
+.drop-zone{border:2px dashed #D1D5DB;border-radius:10px;padding:2.5rem;text-align:center;cursor:pointer;background:#FAFAFA}
+.drop-zone.drag,.drop-zone:hover{border-color:#1B3A6B;background:#EBF3FB}
+.drop-icon{font-size:36px;margin-bottom:10px}
+.drop-label{font-size:16px;font-weight:500;color:#374151;margin-bottom:5px}
+.drop-sub{font-size:13px;color:#9CA3AF}
 #csvFile{display:none}
-.summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
-.metric{background:#F8FAFC;border-radius:8px;padding:.875rem 1rem;border:1px solid #E8EAED}
-.metric-label{font-size:12px;color:#6B7280;margin-bottom:3px}
-.metric-value{font-size:20px;font-weight:600;color:#1a1a1a}
-.filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.fbtn{padding:5px 12px;border-radius:8px;border:1px solid #D1D5DB;background:#fff;font-size:12px;cursor:pointer;color:#374151}
+.two-col{display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.metric{background:#F8FAFC;border-radius:8px;padding:14px 16px;border:1px solid #E8EAED}
+.metric-label{font-size:12px;color:#6B7280;margin-bottom:4px}
+.metric-value{font-size:22px;font-weight:600;color:#1a1a1a}
+.filters{display:flex;gap:8px;margin-bottom:14px}
+.fbtn{padding:6px 16px;border-radius:8px;border:1px solid #D1D5DB;background:#fff;font-size:13px;cursor:pointer;color:#374151;font-weight:500}
 .fbtn.active{background:#EBF3FB;color:#1B3A6B;border-color:#1B3A6B}
-.txn-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-.txn{background:#fff;border:1px solid #E8EAED;border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:52px 1fr auto;gap:8px;align-items:start}
+.txn-list{display:flex;flex-direction:column;gap:5px}
+.txn{background:#fff;border:1px solid #E8EAED;border-radius:8px;padding:11px 14px;display:grid;grid-template-columns:70px 1fr 160px 120px 130px;gap:12px;align-items:center}
 .txn.personal{opacity:.35}
-.tdate{font-size:11px;color:#6B7280;font-weight:500;padding-top:2px}
-.tname{font-size:13px;font-weight:500;color:#1a1a1a;margin-bottom:3px}
-.tcat select{font-size:11px;padding:3px 5px;border-radius:6px;border:1px solid #D1D5DB;background:#fff;color:#1a1a1a;width:100%}
-.tright{text-align:right}
-.tamt{font-size:14px;font-weight:600;color:#1a1a1a;white-space:nowrap}
-.tbtns{display:flex;gap:4px;margin-top:5px;justify-content:flex-end}
-.tbtn{padding:2px 8px;font-size:11px;border-radius:99px;border:1px solid #D1D5DB;cursor:pointer;background:#F3F4F6;color:#6B7280}
+.txn:hover{border-color:#D1D5DB}
+.tdate{font-size:12px;color:#6B7280;font-weight:500}
+.tname{font-size:13px;font-weight:500;color:#1a1a1a}
+.review-badge{font-size:10px;background:#FFF7ED;color:#92400E;padding:1px 7px;border-radius:99px;margin-left:6px;border:1px solid #FED7AA;vertical-align:middle}
+.tcat select{font-size:12px;padding:4px 6px;border-radius:6px;border:1px solid #D1D5DB;background:#fff;color:#1a1a1a;width:100%}
+.tamt{font-size:14px;font-weight:600;color:#1a1a1a;text-align:right}
+.tbtns{display:flex;gap:5px;justify-content:flex-end}
+.tbtn{padding:4px 12px;font-size:12px;border-radius:99px;border:1px solid #D1D5DB;cursor:pointer;background:#F3F4F6;color:#6B7280;font-weight:500}
 .tbtn.ab{background:#ECFDF5;color:#065F46;border-color:#6EE7B7}
 .tbtn.ap{background:#FEF2F2;color:#B91C1C;border-color:#FECACA}
-.review-badge{font-size:10px;background:#FFF7ED;color:#92400E;padding:1px 6px;border-radius:99px;margin-left:4px;border:1px solid #FED7AA}
-.export-card{background:#fff;border-radius:12px;padding:16px;border:1px solid #E8EAED}
-.cat-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid #F3F4F6}
-.cat-row:last-child{border-bottom:none;font-weight:600;font-size:14px;padding-top:8px}
+.sidebar{position:sticky;top:24px}
+.cat-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid #F3F4F6}
+.cat-row:last-child{border-bottom:none;font-weight:600;font-size:14px;padding-top:10px;margin-top:4px}
 .cname{color:#6B7280}
 .camt{color:#1a1a1a;font-weight:500}
-.push-btn{width:100%;padding:14px;background:#1B3A6B;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px}
+.push-btn{width:100%;padding:13px;background:#1B3A6B;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:14px}
 .push-btn:disabled{opacity:.6}
-.copy-btn{width:100%;padding:11px;background:#fff;border:1px solid #D1D5DB;border-radius:8px;font-size:14px;cursor:pointer;color:#374151;margin-top:8px}
-textarea.copy-box{width:100%;font-size:11px;font-family:monospace;padding:8px;border-radius:8px;border:1px solid #E8EAED;background:#F8FAFC;color:#1a1a1a;height:100px;resize:none;margin-top:8px;display:none}
-.success-msg{display:none;background:#ECFDF5;border:1px solid #6EE7B7;border-radius:8px;padding:12px;text-align:center;color:#065F46;font-weight:600;font-size:14px;margin-top:10px}
+.copy-btn{width:100%;padding:10px;background:#fff;border:1px solid #D1D5DB;border-radius:8px;font-size:13px;cursor:pointer;color:#374151;margin-top:8px}
+textarea.copy-box{width:100%;font-size:11px;font-family:monospace;padding:8px;border-radius:8px;border:1px solid #E8EAED;background:#F8FAFC;color:#1a1a1a;height:90px;resize:none;margin-top:8px;display:none}
+.success-msg{display:none;background:#ECFDF5;border:1px solid #6EE7B7;border-radius:8px;padding:10px;text-align:center;color:#065F46;font-weight:600;font-size:13px;margin-top:10px}
 .hidden{display:none}
+.col-header{display:grid;grid-template-columns:70px 1fr 160px 120px 130px;gap:12px;padding:0 14px;margin-bottom:5px}
+.col-header span{font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:.04em}
+.col-header span:nth-child(3){text-align:right}
+.col-header span:last-child{text-align:right}
 </style>
 </head>
 <body>
+<div class="page">
 
 <header>
-  <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="rgba(255,255,255,0.15)"/><path d="M8 16h16M8 10h16M8 22h10" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
-  <div><h1>Dutton Plumbing</h1><p>Chase Card Expense Importer</p></div>
+  <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="9" fill="rgba(255,255,255,0.15)"/><path d="M9 18h18M9 12h18M9 24h12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+  <div><h1>Dutton Plumbing — Card Expense Importer</h1><p>Drop your Chase CSV, review transactions, push to Google Sheet</p></div>
 </header>
 
-<div class="card">
+<div class="card" id="uploadCard">
   <div class="card-title">Step 1 — Upload Chase CSV</div>
   <div class="drop-zone" id="dropZone" onclick="document.getElementById('csvFile').click()"
     ondragover="event.preventDefault();this.classList.add('drag')"
     ondragleave="this.classList.remove('drag')"
     ondrop="event.preventDefault();this.classList.remove('drag');handleFile(event.dataTransfer.files[0])">
     <div class="drop-icon">📊</div>
-    <div class="drop-label">Drop your Chase CSV here or tap to select</div>
-    <div class="drop-sub">chase.com → Account activity → Download → CSV</div>
+    <div class="drop-label">Drop your Chase CSV here or click to select</div>
+    <div class="drop-sub">chase.com → Account activity → Download → CSV format</div>
   </div>
   <input type="file" id="csvFile" accept=".csv" onchange="handleFile(this.files[0])">
 </div>
 
 <div id="mainContent" class="hidden">
-
-  <div class="card">
-    <div class="card-title">Step 2 — Review & Categorize</div>
-    <div class="summary-grid">
-      <div class="metric"><div class="metric-label">Business total</div><div class="metric-value" id="mBiz">$0</div></div>
-      <div class="metric"><div class="metric-label">Personal total</div><div class="metric-value" id="mPer">$0</div></div>
-      <div class="metric"><div class="metric-label">Transactions</div><div class="metric-value" id="mTotal">0</div></div>
-      <div class="metric"><div class="metric-label">Review needed</div><div class="metric-value" id="mRev">0</div></div>
-    </div>
-    <div class="filters">
-      <button class="fbtn active" onclick="setFilter('all',this)">All</button>
-      <button class="fbtn" onclick="setFilter('review',this)">⚠ Review</button>
-      <button class="fbtn" onclick="setFilter('business',this)">Business</button>
-      <button class="fbtn" onclick="setFilter('personal',this)">Personal</button>
-    </div>
-    <div class="txn-list" id="txnList"></div>
+  <div class="summary-grid">
+    <div class="metric"><div class="metric-label">Transactions</div><div class="metric-value" id="mTotal">0</div></div>
+    <div class="metric"><div class="metric-label">Business total</div><div class="metric-value" id="mBiz">$0</div></div>
+    <div class="metric"><div class="metric-label">Personal total</div><div class="metric-value" id="mPer">$0</div></div>
+    <div class="metric"><div class="metric-label">Needs review</div><div class="metric-value" id="mRev">0</div></div>
   </div>
 
-  <div class="export-card">
-    <div class="card-title">Step 3 — Push to Google Sheet</div>
-    <div id="catSummary"></div>
-    <button class="push-btn" id="pushBtn" onclick="pushToSheet()">
-      ✅ Push to Google Sheet
-    </button>
-    <button class="copy-btn" onclick="genScript()">📋 Copy Apps Script instead</button>
-    <textarea class="copy-box" id="copyBox" readonly onclick="this.select()"></textarea>
-    <div class="success-msg" id="successMsg">✅ Expenses pushed to your sheet!</div>
-  </div>
+  <div class="two-col">
+    <div>
+      <div class="card" style="padding-bottom:12px">
+        <div class="card-title">Step 2 — Review & Categorize</div>
+        <div class="filters">
+          <button class="fbtn active" onclick="setFilter('all',this)">All</button>
+          <button class="fbtn" onclick="setFilter('review',this)">⚠ Needs Review</button>
+          <button class="fbtn" onclick="setFilter('business',this)">Business</button>
+          <button class="fbtn" onclick="setFilter('personal',this)">Personal</button>
+        </div>
+        <div class="col-header">
+          <span>Date</span><span>Merchant</span><span>Category</span><span style="text-align:right">Amount</span><span style="text-align:right">Type</span>
+        </div>
+        <div class="txn-list" id="txnList"></div>
+      </div>
+    </div>
 
+    <div class="sidebar">
+      <div class="card">
+        <div class="card-title">Step 3 — Push to Sheet</div>
+        <div id="catSummary"></div>
+        <button class="push-btn" id="pushBtn" onclick="pushToSheet()">✅ Push to Google Sheet</button>
+        <button class="copy-btn" onclick="genScript()">📋 Copy Apps Script instead</button>
+        <textarea class="copy-box" id="copyBox" readonly onclick="this.select()"></textarea>
+        <div class="success-msg" id="successMsg">✅ Done! Card Expenses tab updated.</div>
+      </div>
+    </div>
+  </div>
 </div>
 
+</div>
 <script>
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxbFhtPtVObEO2m-q6HwVjISEi82uGVbIUKA9IG4-A5CDk_xyDZT9pKZjwy_1rI1cbO/exec';
-const CATS = ["Materials / Parts","Fuel","Tools & Equipment","Insurance","Software","Storage","Meals","Travel","Other Business","Personal"];
-const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const SHEET_URL='https://script.google.com/macros/s/AKfycbxbFhtPtVObEO2m-q6HwVjISEi82uGVbIUKA9IG4-A5CDk_xyDZT9pKZjwy_1rI1cbO/exec';
+const CATS=["Materials / Parts","Fuel","Tools & Equipment","Insurance","Software","Storage","Meals","Travel","Other Business","Personal"];
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const FUEL=["circle k","safeway fuel","qt ","7-eleven","stayshon","qt 4"];
+const BIZ=["ferguson","lowes","home depot","van marcke","grainger","winsupply","arizona pump","progressive ins","foremost","extra space","intuit","quickbooks","autozone","sherwin","cobblestone","ppc paint","dunn-edwards","spencers","karsten"];
+const PERSONAL=["starbucks","mcdonald","chipotle","chick-fil","albertsons","costco","fry's","frys","navy exchange","doubletree","hilton","hoka","deckers","walmart","target","busch gardens","black rock coffee","cibo express","be free","mkt orf"];
+const REVIEW_FOOD=["angies","lucky boy","bistro","rudy's","houston hot","joe's ny","serrano","raising cane","city prime","habit","denny","jpmc","inreach","local snacks","ctlp"];
 
-const BIZ = ["ferguson","lowes","home depot","van marcke","grainger","winsupply","arizona pump","progressive ins","foremost","extra space","intuit","quickbooks","autozone","sherwin","cobblestone","ppc paint","dunn-edwards","spencers","karsten"];
-const FUEL = ["circle k","safeway fuel","qt ","7-eleven","stayshon","qt 4"];
-const PERSONAL = ["starbucks","mcdonald","chipotle","chick-fil","albertsons","costco","fry's","frys","navy exchange","doubletree","hilton","hoka","deckers","walmart","target","busch gardens","black rock coffee","cibo express","be free","mkt orf"];
-const REVIEW_FOOD = ["angies","lucky boy","bistro","rudy's","houston hot","joe's ny","serrano","raising cane","city prime","habit","denny","jpmc","inreach","local snacks","boudin","ctlp"];
-
-function categorize(desc, chaseCat) {
-  const d = desc.toLowerCase();
+function categorize(desc,chaseCat){
+  const d=desc.toLowerCase();
   if(FUEL.some(k=>d.includes(k))) return {type:"business",cat:"Fuel",review:false};
   if(d.includes("progressive")||d.includes("foremost")) return {type:"business",cat:"Insurance",review:false};
   if(d.includes("extra space")) return {type:"business",cat:"Storage",review:false};
@@ -128,36 +141,31 @@ function categorize(desc, chaseCat) {
   if(d.includes("amazon")) return {type:"business",cat:"Materials / Parts",review:true};
   if(d.includes("united ")||d.includes("uber")||d.includes("parking")) return {type:"personal",cat:"Travel",review:true};
   if(chaseCat==="Bills & Utilities") return {type:"business",cat:"Other Business",review:false};
-  if(chaseCat==="Annual Membership Fee"||d.includes("membership fee")) return {type:"business",cat:"Other Business",review:false};
   return {type:"business",cat:"Other Business",review:true};
 }
 
-let txns=[], filter="all", csvMonth="";
+let txns=[],filter="all",csvMonth="";
 
-function handleFile(file) {
+function handleFile(file){
   if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const lines = e.target.result.split('\n').filter(l=>l.trim());
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const lines=e.target.result.split('\n').filter(l=>l.trim());
     txns=[];
-    for(let i=1;i<lines.length;i++) {
-      const cols = lines[i].split(',');
+    for(let i=1;i<lines.length;i++){
+      const cols=lines[i].split(',');
       if(cols.length<6) continue;
-      const date=cols[0]?.trim(), desc=cols[2]?.trim();
-      const chaseCat=cols[3]?.trim(), txnType=cols[4]?.trim();
-      const rawAmt=cols[5]?.trim();
+      const date=cols[0]?.trim(),desc=cols[2]?.trim();
+      const chaseCat=cols[3]?.trim(),txnType=cols[4]?.trim(),rawAmt=cols[5]?.trim();
       if(!desc||!rawAmt) continue;
       const amount=Math.abs(parseFloat(rawAmt));
       if(isNaN(amount)||amount===0) continue;
       if(txnType==="Payment"||txnType==="Adjustment") continue;
       const {type,cat,review}=categorize(desc,chaseCat);
       txns.push({id:txns.length,date,desc,amount,type,cat,review});
-      if(!csvMonth && date) {
-        const m = parseInt(date.split('/')[0])-1;
-        csvMonth = MONTHS[m]||"";
-      }
+      if(!csvMonth&&date){const m=parseInt(date.split('/')[0])-1;csvMonth=MONTHS[m]||"";}
     }
-    document.getElementById('dropZone').innerHTML=`<div class="drop-icon">✅</div><div class="drop-label">${file.name} loaded — ${txns.length} transactions</div><div class="drop-sub">Tap to load a different file</div>`;
+    document.getElementById('dropZone').innerHTML=`<div class="drop-icon">✅</div><div class="drop-label">${file.name} — ${txns.length} transactions loaded</div><div class="drop-sub">Click to load a different file</div>`;
     document.getElementById('mainContent').classList.remove('hidden');
     render();
   };
@@ -165,7 +173,6 @@ function handleFile(file) {
 }
 
 function setFilter(f,btn){filter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
-
 function toggleType(id,t){txns[id].type=t;txns[id].review=false;if(t==="personal")txns[id].cat="Personal";updateSummary();render();}
 function setCat(id,cat){txns[id].cat=cat;txns[id].review=false;if(cat==="Personal")txns[id].type="personal";else txns[id].type="business";updateSummary();renderExport();}
 
@@ -188,19 +195,15 @@ function render(){
   document.getElementById('txnList').innerHTML=visible.map(t=>`
     <div class="txn${t.type==="personal"?" personal":""}" id="txn-${t.id}">
       <div class="tdate">${t.date}</div>
-      <div>
-        <div class="tname">${t.desc}${t.review?'<span class="review-badge">review</span>':''}</div>
-        <div class="tcat"><select onchange="setCat(${t.id},this.value)">${CATS.map(c=>`<option${c===t.cat?" selected":""}>${c}</option>`).join('')}</select></div>
-      </div>
-      <div class="tright">
-        <div class="tamt">$${t.amount.toFixed(2)}</div>
-        <div class="tbtns">
-          <button class="tbtn${t.type==="business"?" ab":""}" onclick="toggleType(${t.id},'business')">Biz</button>
-          <button class="tbtn${t.type==="personal"?" ap":""}" onclick="toggleType(${t.id},'personal')">Personal</button>
-        </div>
+      <div class="tname">${t.desc}${t.review?'<span class="review-badge">review</span>':''}</div>
+      <div class="tcat"><select onchange="setCat(${t.id},this.value)">${CATS.map(c=>`<option${c===t.cat?" selected":""}>${c}</option>`).join('')}</select></div>
+      <div class="tamt">$${t.amount.toFixed(2)}</div>
+      <div class="tbtns">
+        <button class="tbtn${t.type==="business"?" ab":""}" onclick="toggleType(${t.id},'business')">Biz</button>
+        <button class="tbtn${t.type==="personal"?" ap":""}" onclick="toggleType(${t.id},'personal')">Personal</button>
       </div>
     </div>`).join('');
-  updateSummary(); renderExport();
+  updateSummary();renderExport();
 }
 
 function renderExport(){
@@ -212,26 +215,20 @@ function renderExport(){
     Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,a])=>
       `<div class="cat-row"><span class="cname">${c}</span><span class="camt">$${a.toFixed(2)}</span></div>`
     ).join('')+
-    `<div class="cat-row"><span class="cname" style="color:#1a1a1a">Total business (${csvMonth||"this month"})</span><span class="camt">$${total.toFixed(2)}</span></div>`;
+    `<div class="cat-row"><span class="cname" style="color:#1a1a1a">Total (${csvMonth||"this month"})</span><span class="camt">$${total.toFixed(2)}</span></div>`;
 }
 
 async function pushToSheet(){
   const btn=document.getElementById('pushBtn');
-  btn.disabled=true; btn.textContent='Pushing to sheet...';
+  btn.disabled=true;btn.textContent='Pushing...';
   const biz=txns.filter(t=>t.type==="business");
   const cats={};
   biz.forEach(t=>{cats[t.cat]=(cats[t.cat]||0)+t.amount});
-  try {
-    await fetch(SHEET_URL+'?'+new URLSearchParams({
-      action:'importCardExpenses',
-      month: csvMonth,
-      data:  JSON.stringify(cats),
-    }).toString(),{method:'GET',mode:'no-cors'});
+  try{
+    await fetch(SHEET_URL+'?'+new URLSearchParams({action:'importCardExpenses',month:csvMonth,data:JSON.stringify(cats)}).toString(),{method:'GET',mode:'no-cors'});
     document.getElementById('successMsg').style.display='block';
     btn.textContent='✅ Pushed!';
-  } catch(e) {
-    btn.disabled=false; btn.textContent='✅ Push to Google Sheet';
-  }
+  }catch(e){btn.disabled=false;btn.textContent='✅ Push to Google Sheet';}
 }
 
 function genScript(){
@@ -245,30 +242,14 @@ function genScript(){
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName("💳 Card Expenses");
   if (!sheet) { SpreadsheetApp.getUi().alert("Card Expenses tab not found"); return; }
-
-  const month = "${month}";
-  const monthCol = ${monthIdx + 2}; // Col ${String.fromCharCode(66+monthIdx)} = ${month}
-
-  const categories = [
-${dataStr}
-  ];
-
-  // Category rows: 4=Materials, 5=Fuel, 6=Tools, 7=Insurance, 8=Software, 9=Storage, 10=Meals, 11=Travel, 12=Other
-  const catRows = {
-    "Materials / Parts": 4, "Fuel": 5, "Tools & Equipment": 6,
-    "Insurance": 7, "Software": 8, "Storage": 9,
-    "Meals": 10, "Travel": 11, "Other Business": 12
-  };
-
-  categories.forEach(([cat, amount]) => {
-    const row = catRows[cat];
-    if (row) sheet.getRange(row, monthCol).setValue(amount);
-  });
-
-  SpreadsheetApp.getUi().alert("Done! ${month} card expenses loaded into Card Expenses tab.");
+  const monthCol = ${monthIdx+2};
+  const catRows = {"Materials / Parts":4,"Fuel":5,"Tools & Equipment":6,"Insurance":7,"Software":8,"Storage":9,"Meals":10,"Travel":11,"Other Business":12};
+  const categories = [\n${dataStr}\n  ];
+  categories.forEach(([cat,amount]) => { const row=catRows[cat]; if(row) sheet.getRange(row,monthCol).setValue(amount); });
+  SpreadsheetApp.getUi().alert("Done! ${month} card expenses loaded.");
 }`;
   const box=document.getElementById('copyBox');
-  box.value=script; box.style.display='block'; box.select();
+  box.value=script;box.style.display='block';box.select();
 }
 </script>
 </body>
